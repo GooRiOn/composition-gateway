@@ -1,3 +1,3 @@
 namespace CompositionGateway.Events;
 
-public record CompositionRequested<TReadModel>(TReadModel ReadModel) where TReadModel : class;
+public record CompositionRequested<TReadModel>(TReadModel ReadModel, IDictionary<string, string> Baggage) where TReadModel : class;

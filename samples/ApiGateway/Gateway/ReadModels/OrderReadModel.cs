@@ -5,6 +5,6 @@ public class OrderReadModel
     public Guid Id { get; set; }
     public string Status { get; set; }
     public decimal TotalPrice => Products.Sum(x => x.Price);
-    public UserReadModel UserDetails { get; set; }
+    public UserReadModel UserDetails { get; set; } = new();
     public IEnumerable<ProductReadModel> Products { get; set; }
 }

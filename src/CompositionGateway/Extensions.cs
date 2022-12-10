@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using CompositionGateway.Composers;
 using CompositionGateway.Dispatchers;
@@ -44,6 +43,6 @@ public static class Extensions
     
     private static RouteHandlerBuilder Compose<TRequest, TReadModel>(this IEndpointRouteBuilder endpoints, string pattern, string method) 
         where TRequest : class where TReadModel : class 
-        => endpoints.MapMethods(pattern, new[] {method} ,async ([FromBody] TRequest request, ICompositionDispatcher dispatcher, CancellationToken cancellationToken) 
+        => endpoints.MapMethods(pattern, new[] {method} ,async (TRequest request, [FromServices] ICompositionDispatcher dispatcher, CancellationToken cancellationToken) 
             => await dispatcher.DispatchAsync<TRequest, TReadModel>(request, cancellationToken));
 }

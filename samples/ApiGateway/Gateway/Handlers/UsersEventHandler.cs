@@ -6,15 +6,24 @@ namespace ApiGateway.Gateway.Handlers;
 
 public sealed class UsersEventHandler : ICompositionEventHandler<OrderReadModel>
 {
-    public Task HandleAsync(CompositionRequested<OrderReadModel> @event, CancellationToken cancellationToken = default)
-    {
-        @event.ReadModel.UserDetails = new UserReadModel
-        {
-            FullName = "Joe Doe",
-            Email = "jdoe@gmail.com",
-            ShippingAddress = "MailStreet 13, WDC"
-        };
+    private readonly HttpClient _httpClient;
 
-        return Task.CompletedTask;
+    public UsersEventHandler(IHttpClientFactory factory)
+    {
+        _httpClient = factory.CreateClient();
+        _httpClient.BaseAddress = new Uri("http://localhost:5101");
+    }
+    
+    public async Task HandleAsync(CompositionRequested<OrderReadModel> @event, CancellationToken cancellationToken = default)
+    {
+        var userDetails = await _httpClient
+            .GetFromJsonAsync<UserReadModel>($"/users/{@event.ReadModel.UserDetails.UserId}", cancellationToken);
+
+        if (userDetails is null)
+        {
+            throw new InvalidOperationException();
+        }
+        
+        @event.ReadModel.UserDetails = userDetails;
     }
 }
